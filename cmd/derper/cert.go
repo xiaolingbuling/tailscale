@@ -88,7 +88,12 @@ func (m *manualCertManager) TLSConfig() *tls.Config {
 }
 
 func (m *manualCertManager) getCertificate(hi *tls.ClientHelloInfo) (*tls.Certificate, error) {
-
+	
+	// Return a shallow copy of the cert so the caller can append to its
+	// Certificate field.
+	certCopy := new(tls.Certificate)
+	*certCopy = *m.cert
+	certCopy.Certificate = certCopy.Certificate[:len(certCopy.Certificate):len(certCopy.Certificate)]
 	
 	return m.cert, nil
 }
